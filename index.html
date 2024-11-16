@@ -137,6 +137,15 @@
                 background-color: #ff9a8b;
             }
         }
+
+        /* Стиль для пасхалки */
+        .easter-egg {
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none; /* Скрыто по умолчанию */
+        }
     </style>
 </head>
 <body>
@@ -149,6 +158,9 @@
         <button onclick="checkCode()">Проверить</button>
 
         <div id="message"></div>
+
+        <!-- Пасхалка -->
+        <div class="easter-egg" id="easterEgg">Аристократ лох!</div>
 
         <!-- Сейф -->
         <div class="safe" id="safe"></div>
@@ -176,6 +188,7 @@
             const message = document.getElementById('message');
             const safe = document.getElementById('safe');
             const body = document.body;
+            const easterEgg = document.getElementById('easterEgg');
             
             // Сброс сигнала тревоги, если код правильный или осталось меньше попыток
             body.classList.remove('alarm');
@@ -188,11 +201,19 @@
 
             attempts++;
 
+            // Показываем пасхалку "Аристократ лох", если попытка неправильная
+            if (guess !== correctCode) {
+                easterEgg.style.display = "block"; // Показываем пасхалку
+            } else {
+                easterEgg.style.display = "none"; // Скрываем пасхалку, если код правильный
+            }
+
             // Проверка на правильность кода
             if (guess === correctCode) {
                 safe.classList.add('open');
                 message.textContent = "Поздравляю! Сейф открыт!";
                 guessInput.disabled = true;
+                easterEgg.style.display = "none"; // Скрываем пасхалку при успехе
             } else {
                 if (attempts >= maxAttempts) {
                     message.textContent = `Вы не угадали код. Попробуйте снова. Код был: ${correctCode}`;
@@ -208,4 +229,3 @@
 
 </body>
 </html>
-
