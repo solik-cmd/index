@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра "Открой сейф"</title>
+    <style>
+        /* Основной стиль страницы */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe); /* Мягкий голубой градиент */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6); /* полупрозрачный черный фон */
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-family: 'Verdana', sans-serif;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 18px;
+            width: 200px;
+            text-align: center;
+            border: 2px solid #fff;
+            background: transparent;
+            color: white;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00f2fe;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-top: 20px;
+            background-color: #00f2fe;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4facfe;
+        }
+
+        /* Стиль для сейфа */
+        .safe {
+            margin-top: 30px;
+            width: 250px;
+            height: 250px;
+            background-color: #333;
+            border-radius: 12px;
+            border: 5px solid #fff;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: all 1s ease;
+            overflow: hidden;
+        }
+
+        .safe::before {
+            content: "Сейф закрыт";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 22px;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        .safe.open::before {
+            content: "Сейф открыт!";
+            opacity: 0;
+        }
+
+        .safe.open {
+            width: 300px;
+            height: 300px;
+            background-color: #4CAF50;
+            border: 5px solid #fff;
+        }
+
+        .safe.open::after {
+            content: "Открылся!";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Сигнализация */
+        .alarm {
+            animation: alarm 1s infinite alternate;
+        }
+
+        @keyframes alarm {
+            0% {
+                background-color: #ff4e50;
+            }
+            100% {
+                background-color: #ff9a8b;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Игра "Открой сейф"</h1>
+        <p>Введите правильный код, чтобы открыть сейф.</p>
+        
+        <input type="text" id="guessInput" maxlength="4" placeholder="Введите код">
+        <button onclick="checkCode()">Проверить</button>
+
+        <div id="message"></div>
+
+        <!-- Сейф -->
+        <div class="safe" id="safe"></div>
+    </div>
+
+    <script>
+        // Генерация случайного 4-значного кода
+        function generateRandomCode() {
+            let code = '';
+            for (let i = 0; i < 4; i++) {
+                code += Math.floor(Math.random() * 10); // генерируем случайную цифру от 0 до 9
+            }
+            return code;
+        }
+
+        // Правильный код (будет случайным)
+        let correctCode = generateRandomCode();
+        let attempts = 0;
+        const maxAttempts = 5;
+
+        // Функция для проверки кода
+        function checkCode() {
+            const guessInput = document.getElementById('guessInput');
+            const guess = guessInput.value;
+            const message = document.getElementById('message');
+            const safe = document.getElementById('safe');
+            const body = document.body;
+            
+            // Сброс сигнала тревоги, если код правильный или осталось меньше попыток
+            body.classList.remove('alarm');
+            
+            // Проверка на правильность ввода
+            if (guess.length !== 4 || isNaN(guess)) {
+                message.textContent = "Введите 4 цифры!";
+                return;
+            }
+
+            attempts++;
+
+            // Проверка на правильность кода
+            if (guess === correctCode) {
+                safe.classList.add('open');
+                message.textContent = "Поздравляю! Сейф открыт!";
+                guessInput.disabled = true;
+            } else {
+                if (attempts >= maxAttempts) {
+                    message.textContent = `Вы не угадали код. Попробуйте снова. Код был: ${correctCode}`;
+                    guessInput.disabled = true;
+                } else {
+                    message.textContent = `Неверный код. Осталось попыток: ${maxAttempts - attempts}`;
+                    // Включаем сигнализацию после неудачной попытки
+                    body.classList.add('alarm');
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
+
