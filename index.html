@@ -18,6 +18,7 @@
             flex-direction: column;
             overflow: hidden;
             color: white;
+            transition: background-color 0.5s ease; /* Добавлена анимация для фона */
         }
 
         .container {
@@ -206,10 +207,12 @@
                 safe.classList.add('open');
                 message.textContent = "Поздравляю! Сейф открыт!";
                 guessInput.disabled = true;
+                body.classList.remove('alarm'); // Останавливаем сигнализацию, если код правильный
             } else {
                 if (attempts >= maxAttempts) {
                     message.textContent = `Вы не угадали код. Попробуйте снова. Код был: ${correctCode}`;
                     guessInput.disabled = true;
+                    body.classList.remove('alarm'); // Останавливаем сигнализацию, если попытки закончились
                 } else {
                     message.textContent = `Неверный код. Осталось попыток: ${maxAttempts - attempts}`;
                     // Включаем сигнализацию после неудачной попытки
